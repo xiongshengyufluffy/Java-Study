@@ -68,7 +68,107 @@ class Solution:
         
         return result
 ```
+# java版本二叉树的前序、中序、后序遍历(使用迭代实现)
+## 前序
+```java
+// 迭代方式前序遍历 V--L--R
+// 144:https://leetcode-cn.com/problems/binary-tree-preorder-traversal/
+public class preOrder {
+    static Stack<TreeNode> stk;
+    static List<Integer> ret;
+    public List<Integer> preorderTraversal(TreeNode root) {
+        if(root == null) return new ArrayList<>();
+        stk = new Stack<>();
+        ret = new ArrayList<>();
+        goLeft(root);
+        while(!stk.isEmpty()){
+            TreeNode node = stk.pop();
+            if(node.right != null){
+                node = node.right;
+                goLeft(node);
+            }
+        }
+        return ret;
+    }
 
+    private static void goLeft(TreeNode node){
+        while(node != null){
+            stk.add(node);
+            ret.add(node.val);
+            node = node.left;
+        }
+    }
+}
+```
+## 中序
+```java
+// 迭代方式中序遍历
+// https://leetcode-cn.com/problems/binary-tree-inorder-traversal/
+// 94. 二叉树的中序遍历
+public class inOrder {
+    static Stack<TreeNode> stk;
+    static List<Integer> ret;
+    public List<Integer> inorderTraversal(TreeNode root) {
+        stk = new Stack<>();
+        ret = new ArrayList<>();
+        if(root == null) return ret;
+        visitLeft(root);
+        while(!stk.isEmpty()){
+            TreeNode node = stk.pop();
+            ret.add(node.val);
+            if(node.right != null){
+                node = node.right;
+                visitLeft(node);
+            }
+        }
+        return ret;
+    }
+
+    public static void visitLeft(TreeNode node){
+        while(node != null){
+            stk.add(node);
+            node = node.left;
+        }
+    }
+}
+```
+
+## 后序
+```java
+// 迭代方式后序遍历
+// 145:https://leetcode-cn.com/problems/binary-tree-postorder-traversal/
+// L R V
+// 可以看作
+// (1)以先R后V的方式进行前序遍历 --> V R L
+// (2)逆序输出前序遍历的值 --> L R V
+public class postOrder {
+    static Stack<TreeNode> stk;
+    static List<Integer> ret;
+    public List<Integer> postorderTraversal(TreeNode root) {
+        if(root == null) return new ArrayList<>();
+        stk = new Stack<>();
+        ret = new ArrayList<>();
+        goRight(root);
+        while(!stk.isEmpty()){
+            TreeNode node = stk.pop();
+            if(node.left != null){
+                node = node.left;
+                goRight(node);
+            }
+        }
+        Collections.reverse(ret);
+        return ret;
+    }
+
+    private static void goRight(TreeNode node){
+        while(node != null){
+            stk.add(node);
+            ret.add(node.val);
+            node = node.right;
+        }
+    }
+}
+```
 # 331. 验证二叉树的前序序列化
 ```
 class Solution {

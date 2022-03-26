@@ -20,6 +20,6 @@
   - free链表
 
 ![6](https://xiongshengyu-1256692535.cos.ap-beijing.myqcloud.com/photos/6.png)
-
+![](../../Tools/shortcut/photos/shotcut/1.png)
 
 ![20210411193018](https://xiongshengyu-1256692535.cos.ap-beijing.myqcloud.com/photos/20210411193018.png)

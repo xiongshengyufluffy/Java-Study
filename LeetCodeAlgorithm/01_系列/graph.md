@@ -134,7 +134,7 @@ class Solution {
     - 这个是使用邻接表的版本
 
 #### 个人喜欢的写法
-```
+```java
 // 787.
 class Solution {
     static Map<Integer, List<int[]>> map;
@@ -392,7 +392,7 @@ class Solution {
 - 思路
   - 初始化所有边的距离为-inf 
   - n次迭代
-```
+```java
 class Solution {
     static int[] dist;
     static boolean[] set;

@@ -1,6 +1,123 @@
 # 剑指 Offer 03. 数组中的重复数字
 https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/
+## 时间O(n),空间O(1)解法
+- (1)先遍历判断,数组中的数的范围是不是都是在[0, n- 1]内,如果不是,返回-1
+- (2)遍历,**原地hash**
+  - 如果num < 0 或 num >= n,返回-1
+  - 如果nums[i] != i 并且 (nums[nums[i]] != nums[i]) 一直原地交换
+  - 如果发现坐标i, nums[i]上的元素相等,返回nums[i]
 
+# 剑指 Offer xx-不修改数组找出重复的数字
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108281716767.png)
+不能修改
+## 迭代版
+```Python
+class Solution:
+    def findDuplicate(self, nums: List[int]) -> int:
+        left = 1
+        right = len(nums) - 1
+        while left < right:
+            mid = left + (right - left) // 2
+            cnt = 0
+            for num in nums:
+                if num <= mid:
+                    cnt += 1
+            if cnt <= mid:
+                left = mid + 1
+            else:
+                right = mid
+
+        return left 
+```
+
+# 剑指 Offer xx-搜索二维矩阵
+## 递归版
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108281806387.png)
+## 迭代版
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108281803522.png)
+
+## 递归版(todo:补充)
+
+# 剑指 Offer xx.从尾到头打印链表
+- 其实就是反转链表    
+  
+
+# 剑指 Offer xx.重建二叉树
+
+```java
+class Solution {
+    Map<Integer, Integer> map;
+    static int[] preorder;
+    static int[] inorder;
+    public TreeNode buildTree(int[] _preorder, int[] _inorder) {
+        if(_preorder == null || _preorder.length == 0) return null;
+        preorder = _preorder;
+        inorder = _inorder;
+        
+        map = new HashMap<>(); // 记录中序遍历序列中<val-index>
+        for(int i = 0; i < inorder.length; i++){
+            map.put(inorder[i], i);
+        }
+        return dfs(0, preorder.length - 1, 0, inorder.length - 1);
+    }
+    
+    private TreeNode dfs(int prelo, int prehi, int inlo, int inhi){
+        if(prelo > prehi) return null;
+        if(inlo > inhi) return null;
+        TreeNode root = new TreeNode(preorder[prelo]);
+        int index = map.get(root.val);
+        int leftLength = index - inlo;
+        
+        // [inlo, index - 1] [index] [index + 1, inhi]
+        root.left = dfs(prelo + 1, prelo + leftLength, 
+                        inlo, index - 1);
+        root.right = dfs(prelo + leftLength+ 1, prehi, 
+                         index + 1, inhi);
+        return root;
+    }
+}
+```
+### Points:
+- (1)使用hashmap替代线性扫描,查找中序遍历序列中值和前序遍历序列头节点相等的元素的下标
+- (2)<font color="red">查找到**index**后,通过计算左子树L的长度leftLength进行区间的划分</font>
+
+# 剑指 Offer xx.二叉树的下一个节点
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108282038554.png)
+
+
+
+分类讨论
+
+(1)如果F为根节点,F有右孩子,则F的下一个节点为H(<font color=red><b>F为左侧链的起点</b></font>)
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108282104685.png)
+
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108290925231.png)
+H为F的下一个节点的原因:
+- **pop F**,F has rightChild E,goLeft(E)
+- push(E),push(H)
+- **pop H**
+  
+(2)如果B为D的左孩子,则B的下一个节点为D
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108282120020.png)
+
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108290936661.png)
+- goLeft(D)
+- pushD, pushB
+- popB, popE
+  
+(3)D为C的右孩子,D不存在右孩子,D的后继为F
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108282123848.png)
+- goLeft(F)
+- push F, push C, pushA
+- popA, popC, C has rightChild D, go right
+- pushD, pushB
+- popB, popD
+- popF
+
+### 总结
+- (1)如果当前节点有右孩子,当前节点中序遍历下的下一个节点为goLeft(rightChild)抵达的左侧链顶点(见分类讨论(1))
+- (2)如果当前节点没有右孩子,如果他是左儿子,则他的中序遍历下一个节点是他爸爸(见分类讨论(2))
+- (3)如果当前节点(D)没有右孩子,如果他不是左儿子,则一直往他祖先找,一直到找到他的某个祖先(C)是该祖先的父节点(F)的左儿子,则他的中序遍历下一个节点是该祖先的父节点(见分类讨论(3))
 # 剑指 Offer 12. 矩阵中的路径
 
 https://leetcode-cn.com/problems/word-search/
@@ -981,7 +1098,7 @@ class Solution:
 # 排序类复习
 # 剑指 Offer 40. 最小的k个数
 https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/
-(晚上回去再看,实在不想看)
+
 
 # 剑指 Offer 42. 连续子数组的最大和
 https://leetcode-cn.com/submissions/detail/63099720/

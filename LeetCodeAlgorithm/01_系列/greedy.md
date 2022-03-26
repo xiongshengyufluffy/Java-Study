@@ -1,4 +1,5 @@
 ## 767.重构字符串
+![](https://gitee.com/fluffyball/blogimage/raw/master/images/localPC/202108280951936.png)
 ### 字符串处理
 ### 大顶堆 + 自定义类
 ### 启发:可以用自定义的静态内部类实现key-value映射,而非使用HashMap
@@ -315,3 +316,115 @@ class Solution {
 <img src="photos/greedy/1520_3.jpg">
 
 <img src="photos/greedy/1520_4.jpg">
+
+# 拼多多笔试0828
+商品促销(**可以百度一下反悔贪心**)：  
+拼多多要搞促销，一共有n件商品，每个商品i有评分Score[i] > 0正整数，持续时间T[i] > 0正整数，  
+规定用户一天最多买一件商品，持续时间过后用户就不能再购买这件商品。  
+求用户能买到的商品的最大评分。  
+
+~~~
+输入：  
+第一行为一个正整数T，代表有多少组测试用例  
+第二行为一个正整数N，代表这一组测试用例有多少件商品  
+随后的N行，每一行第一个数为商品的评分，第二个数为商品的持续时间，以空格隔开  
+3
+3
+1 3
+2 3
+3 3
+3
+1 2
+2 2
+3 2
+7
+1 1
+2 2
+2 6
+3 3
+4 4
+5 4
+6 4
+
+输出：  
+最大评分：  
+6
+5
+20
+~~~
+
+```java
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class Main {
+    static int[][] goods;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt(); // 用例数量
+        for (int i = 0; i < N; i++) {
+            int nums = sc.nextInt(); // 商品数量
+            goods = new int[nums][2];
+            for (int j = 0; j < nums; j++) { // nums组商品
+                goods[j][0] = sc.nextInt(); // 评分
+                goods[j][1] = sc.nextInt(); // 持续时间
+            }
+            evaluate();
+        }
+
+    }
+
+    static void evaluate(){
+        // 1.按照持续时间降序; 2.持续时间相同,按照评分降序
+        Arrays.sort(goods, (o1, o2) -> {
+            if(o1[1] != o2[1]){
+                return o2[1] - o1[1];
+            }else{
+                return o2[0] - o1[0];
+            }
+        });
+
+        int index = goods[0][1];
+        // 初始化一个maxHeap
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2 - o1;
+            }
+        });
+        int i = 0;
+        int maxScore = 0;
+        while(index > 0){
+            while (i < goods.length){
+                if(goods[i][1] >= index){
+                    maxHeap.add(goods[i][0]);
+                }else{
+                    break;
+                }
+                i++;
+            }
+            if(!maxHeap.isEmpty()){
+                maxScore += maxHeap.poll();
+            }
+            index--;
+        }
+        System.out.println(maxScore);
+    }
+}
+```
+
+## 思路
+- 贪心思路
+  - **在时间为t时,希望在当前天数允许的范围内,尽可能获得多的分数score**
+    - 每天只能选择一个分数
+  - <font color=blue>有效期为10天的商品,在第7天可以选择,在第3天也可以选择</font>;
+  - <font color=blue>有效期为4天的商品,在第7天不能选择,在第3天也可以选择</font>;
+  - 所以遍历天数时,从**天数大→天数小**
+- (1)先将商品按照天数倒序排列,相同天数按照score倒叙排列
+- (2)初始化一个大顶堆,用于存放累计分数score
+- (2)index从最大的天数(完成排列后二维数组的第0个元素)开始,逐渐迭代递减
+  - 将>=index的商品的分数(天数,score)加入堆中(只要>=index,表示保质期长度>=index)
+  - maxScore ← 若大顶堆非空,poll()
+  - 将maxScore累加到整体分数中,同时index--
